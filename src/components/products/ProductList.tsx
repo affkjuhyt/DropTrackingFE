@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchProducts, deleteProduct } from '@/store/slices/products';
 import { Button } from '@/components/ui/Button';
-import { Table } from '@/components/ui/Table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { Column, Product, RootState } from '@/types';
 
 export function ProductList() {
@@ -50,11 +50,29 @@ export function ProductList() {
   ];
 
   return (
-    <div>
-      <Table
-        data={items}
-        columns={columns}
-      />
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {columns.map((column) => (
+              <TableHead key={column.header}>{column.header}</TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {items.map((item) => (
+            <TableRow key={item.id}>
+              {columns.map((column) => (
+                <TableCell key={`${item.id}-${column.header}`}>
+                  {column.render
+                    ? column.render(item[column.accessor as keyof Product])
+                    : item[column.accessor as keyof Product]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -1,17 +1,19 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export function Protected({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
   
   if (isLoading) {
     return <div>Loading...</div>;
   }
   
   if (!isAuthenticated) {
-    redirect("/auth/signin");
+    router.push("/auth/signin");
+    return null;
   }
   
   return <>{children}</>;
