@@ -21,15 +21,3 @@ export const useQuery = <TData, TParams = void>(
     ...restOptions
   });
 };
-
-// Example usage:
-// const { data, isLoading } = useQuery({
-//   queryKey: queryKeys.products.list(),
-//   queryFn: () => getProducts(),
-//   enabled: isAuthenticated,
-//   staleTime: 10 * 60 * 1000,
-//   onError: (error) => {
-//     const { message } = handleApiError(error);
-//     // Handle error in component
-//   }
-// });
