@@ -1,103 +1,126 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Total Sales</dt>
+                  <dd className="text-lg font-medium text-gray-900">$23,456</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Orders</dt>
+                  <dd className="text-lg font-medium text-gray-900">156</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Products</dt>
+                  <dd className="text-lg font-medium text-gray-900">45</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Customers</dt>
+                  <dd className="text-lg font-medium text-gray-900">89</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white shadow rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Orders</h3>
+          <div className="mt-4">
+            <div className="flex flex-col">
+              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#12345</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Doe</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Delivered</span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$156.00</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-02-15</td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#12344</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jane Smith</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$234.00</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-02-14</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
