@@ -25,9 +25,20 @@ const onResponse = (response: AxiosResponse): AxiosResponse => {
 
 const onResponseError = async (error: AxiosError): Promise<AxiosError> => {
   if (error.response?.status === 401) {
-    // Handle unauthorized access
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    try {
+      const response = await apiClient.post('/auth/refresh');
+      const { access_token } = response.data;
+      localStorage.setItem('token', access_token);
+      
+      if (error.config) {
+        // Retry the original request with new token
+        error.config.headers.Authorization = `Bearer ${access_token}`;
+        return apiClient(error.config);
+      }
+    } catch (refreshError) {
+      localStorage.removeItem('token');
+      window.location.href = '/auth/signin';
+    }
   }
   return Promise.reject(error);
 };

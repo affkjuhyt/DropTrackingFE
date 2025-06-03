@@ -40,7 +40,7 @@ export function ProductList() {
       accessor: 'id',
       render: (value) => (
         <Button
-          variant="danger"
+          variant="destructive"
           onClick={() => handleDelete(value as string)}
         >
           Delete
