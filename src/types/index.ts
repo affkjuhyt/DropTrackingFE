@@ -1,12 +1,65 @@
 export interface Product {
   id: string;
   name: string;
-  sku: string;
+  description: string;
   price: number;
   stock: number;
-  status: 'active' | 'inactive';
   category: string;
-  imageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductFilters {
+  search?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+}
+
+export interface Order {
+  id: string;
+  productId: string;
+  quantity: number;
+  totalPrice: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Column<T> {
+  header: string;
+  accessor: keyof T;
+  render?: (value: T[keyof T]) => React.ReactNode;
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  message: string;
+  success: boolean;
+}
+
+// Redux Action Types
+export type ActionStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
+
+export interface AsyncState {
+  status: ActionStatus;
+  error: string | null;
+}
+
+// Redux State Types
+export interface ProductsState extends AsyncState {
+  items: Product[];
+  selectedProduct: Product | null;
+}
+
+export interface OrdersState extends AsyncState {
+  items: Order[];
+  selectedOrder: Order | null;
+}
+
+export interface RootState {
+  products: ProductsState;
+  orders: OrdersState;
 }
 
 export interface Order {
@@ -23,7 +76,7 @@ export interface Order {
     price: number;
   }>;
   total: number;
-  status: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'completed' | 'cancelled';
   date: string;
 }
 

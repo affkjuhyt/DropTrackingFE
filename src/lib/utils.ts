@@ -27,12 +27,12 @@ export const getOrderStatusColor = (status: Order['status']): string => {
     delivered: 'green',
     cancelled: 'red',
   };
-  return colors[status] || 'gray';
+  return colors[status as keyof typeof colors] || 'gray';
 };
 
 export const groupProductsByCategory = (products: Product[]): Record<string, Product[]> => {
   return products.reduce((acc, product) => {
-    const category = product.category;
+    const category = product.category as string;
     if (!acc[category]) {
       acc[category] = [];
     }
