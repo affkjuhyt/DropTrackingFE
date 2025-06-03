@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LayoutDashboard, Package, ShoppingCart, BarChart3, Search, Bell, User } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
       {/* Vertical Sidebar */}
@@ -34,10 +34,10 @@ export default function Navbar() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+        <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 py-8">
           <div className="flex-1 max-w-lg">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <Input
                 type="search"
                 placeholder="Search..."
@@ -58,7 +58,7 @@ export default function Navbar() {
 
         {/* Page Content */}
         <main className="flex-1 p-6 bg-gray-50">
-          {/* Content will be rendered here */}
+          {children}
         </main>
       </div>
     </div>

@@ -22,8 +22,7 @@ export default function RootLayout({
           <IconProvider>
             <QueryProvider>
               <div className="min-h-screen">
-                <Navbar />
-                {children}
+                <Navbar>{children}</Navbar>
               </div>
             </QueryProvider>
           </IconProvider>
