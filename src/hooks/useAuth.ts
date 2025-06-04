@@ -17,7 +17,7 @@ export const useAuth = () => {
     mutationFn: async (credentials) => {
       const response = await apiClient.post('/auth/login', credentials);
       const { access_token } = response.data;
-      localStorage.setItem('token', access_token);
+      document.cookie = `token=${access_token}; path=/; domain=${window.location.hostname}; SameSite=Strict; httpOnly=false`;
       return response.data;
     }
   });
@@ -30,15 +30,25 @@ export const useAuth = () => {
   });
 
   const logout = () => {
-    localStorage.removeItem('token');
+    const domain = window.location.hostname;
+    document.cookie = `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict; httpOnly=false`;
     window.location.href = '/auth/signin';
   };
+
+  const getToken = () => {
+    const cookies = document.cookie.split(';');
+    const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
+    return tokenCookie ? tokenCookie.split('=')[1] : null;
+  };
+
+  const isAuthenticated = typeof window !== 'undefined' ? !!getToken() : false;
 
   return {
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout,
-    isPending: loginMutation.isPending || registerMutation.isPending
+    isPending: loginMutation.isPending || registerMutation.isPending,
+    isAuthenticated
   };
 };
 

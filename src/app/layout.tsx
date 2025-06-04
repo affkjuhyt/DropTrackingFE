@@ -6,13 +6,15 @@ import { QueryProvider } from '@/providers/QueryProvider';
 import { StoreProvider } from '@/providers/StoreProvider';
 import { IconProvider } from '@/providers/IconProvider';
 import { usePathname } from 'next/navigation';
+import { NO_NAVBAR_ROUTES, type AuthRoutes } from '@/constants/routes';
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname() as AuthRoutes;
+
   
   return (
     <html lang="en">
@@ -21,7 +23,7 @@ export default function RootLayout({
           <IconProvider>
             <QueryProvider>
               <div className="min-h-screen">
-                {pathname === '/auth/signin' ? (
+                {NO_NAVBAR_ROUTES.includes(pathname) ? (
                   children
                 ) : (
                   <Navbar>{children}</Navbar>

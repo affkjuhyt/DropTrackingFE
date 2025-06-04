@@ -1,9 +1,17 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { LayoutDashboard, Package, ShoppingCart, BarChart3, Search, Bell, User } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Navbar({ children }: { children: React.ReactNode }) {
+  const { logout } = useAuth();
   return (
     <div className="flex h-screen">
       {/* Vertical Sidebar */}
@@ -46,13 +54,66 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" className="relative p-2">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
-            </Button>
-            <Button variant="outline" size="sm" className="p-2">
-              <User className="h-5 w-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="relative p-2">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute -top-2 -right-2 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">3</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 p-4">
+                <div className="text-lg font-medium mb-2">Notifications</div>
+                <div className="h-px bg-gray-200 dark:bg-gray-800 my-2" />
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white">
+                      <Calendar className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium">Your call has been confirmed</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">5 minutes ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white">
+                      <Inbox className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium">You have a new message</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">1 minute ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white">
+                      <CalendarCheck2 className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium">Your subscription is expiring soon</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">2 hours ago</p>
+                    </div>
+                  </div>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="p-2">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>My Account</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => logout()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
