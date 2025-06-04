@@ -1,4 +1,3 @@
-import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -8,6 +7,7 @@ export async function middleware(request: NextRequest) {
   console.log('Request URL:', request.url);
   const token = request.cookies.get('token')?.value || request.headers.get('Authorization')?.split(' ')[1];
 
+  console.log("token: ", token);
   console.log('Current pathname:', pathname);
   console.log('Token exists:', !!token);
 
@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
         console.log('Redirecting authenticated user to:', redirectUrl.toString());
         const redirectResponse = NextResponse.redirect(redirectUrl);
         redirectResponse.cookies.set('token', token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           path: '/'
@@ -78,7 +78,7 @@ export async function middleware(request: NextRequest) {
     // Token is valid, proceed with the request
     const nextResponse = NextResponse.next();
     nextResponse.cookies.set('token', token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/'

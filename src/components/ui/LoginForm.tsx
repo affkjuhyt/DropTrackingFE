@@ -29,6 +29,7 @@ export function LoginForm({
     e.preventDefault()
     try {
       const response = await login({ email, password })
+      console.log("response: ", response)
       if (response.access_token) {
         // Add a small delay to ensure token is set
         setTimeout(() => {

@@ -43,7 +43,6 @@ const apiClient = axios.create({
 
 const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   console.log('[Axios] Processing request config:', config.url);
-  const token = getCookie('token');
   console.log('[Axios] Token from cookie:', token ? 'Found' : 'Not found');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

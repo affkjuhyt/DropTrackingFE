@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/Input"
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
 import apiClient from "@/lib/axios";
 
 interface UserProfile {
@@ -17,16 +16,12 @@ interface UserProfile {
 }
 
 const fetchUserProfile = async (): Promise<UserProfile> => {
-  console.log('[Profile] Fetching user profile...');
   const { data } = await apiClient.get('/users/me');
-  console.log('[Profile] Received profile data:', data);
   return data;
 };
 
 const updateUserProfile = async (profile: Partial<UserProfile>): Promise<UserProfile> => {
-  console.log('Updating profile with data:', profile);
   const { data } = await apiClient.patch('/users/profile', profile);
-  console.log('Update response:', data);
   return data;
 };
 
@@ -70,7 +65,7 @@ export default function Component() {
           </div>
         </header>
         <div className="space-y-8">
-          <Card>
+          <Card className="py-4">
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="first_name">First Name</Label>
