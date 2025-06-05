@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -106,63 +106,81 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
         </div>
-        <div className="flex-1 px-2 space-y-2">
-        <NavItem
-          href="/"
-          icon={LayoutDashboard}
-          label="Dashboard"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          icon={ShoppingBagIcon}
-          label="Buying"
-          isCollapsed={isCollapsed}
-          subItems={[
-            { href: '/buying/purchase-orders', label: 'Purchase Orders' },
-            { href: '/buying/purchase-invoices', label: 'Purchase Invoices' },
-            { href: '/buying/suppliers', label: 'Suppliers' },
-            { href: '/buying/contacts', label: 'Contacts' },
-          ]}
-        />
-        <NavItem
-          icon={ShoppingCart}
-          label="Selling"
-          isCollapsed={isCollapsed}
-          subItems={[
-            { href: '/selling/customers', label: 'Customers' },
-            { href: '/selling/orders', label: 'Orders' },
-            { href: '/selling/invoices', label: 'Invoices' },
-            { href: '/selling/sales-partners', label: 'Sales Partners' },
-            { href: '/selling/sales-persons', label: 'Sales Persons' },
-          ]}
-        />
-        <NavItem
-          icon={Warehouse}
-          label="Stock"
-          isCollapsed={isCollapsed}
-          subItems={[
-            { href: '/stocks/products', label: 'Products' },
-            { href: '/stocks/categories', label: 'Categories' },
-          ]}
-        />
-        <NavItem
-          href="/shipping"
-          icon={Container}
-          label="Shipping"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/users"
-          icon={User2Icon}
-          label="Users"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/analytics"
-          icon={BarChart3}
-          label="Analytics"
-          isCollapsed={isCollapsed}
-        />
+        {/* Main Navigation */}
+        <div className="flex-1 flex flex-col px-2">
+          <div className="flex-1 space-y-2">
+            <NavItem
+              href="/"
+              icon={LayoutDashboard}
+              label="Dashboard"
+              isCollapsed={isCollapsed}
+            />
+            <NavItem
+              icon={ShoppingBagIcon}
+              label="Buying"
+              isCollapsed={isCollapsed}
+              subItems={[
+                { href: '/buying/purchase-orders', label: 'Purchase Orders' },
+                { href: '/buying/purchase-invoices', label: 'Purchase Invoices' },
+                { href: '/buying/suppliers', label: 'Suppliers' },
+                { href: '/buying/contacts', label: 'Contacts' },
+              ]}
+            />
+            <NavItem
+              icon={ShoppingCart}
+              label="Selling"
+              isCollapsed={isCollapsed}
+              subItems={[
+                { href: '/selling/customers', label: 'Customers' },
+                { href: '/selling/orders', label: 'Orders' },
+                { href: '/selling/invoices', label: 'Invoices' },
+                { href: '/selling/sales-partners', label: 'Sales Partners' },
+                { href: '/selling/sales-persons', label: 'Sales Persons' },
+              ]}
+            />
+            <NavItem
+              icon={Warehouse}
+              label="Stock"
+              isCollapsed={isCollapsed}
+              subItems={[
+                { href: '/stocks/products', label: 'Products' },
+                { href: '/stocks/categories', label: 'Categories' },
+              ]}
+            />
+            <NavItem
+              href="/shipping"
+              icon={Container}
+              label="Shipping"
+              isCollapsed={isCollapsed}
+            />
+            <NavItem
+              href="/users"
+              icon={User2Icon}
+              label="Users"
+              isCollapsed={isCollapsed}
+            />
+            <NavItem
+              href="/analytics"
+              icon={BarChart3}
+              label="Analytics"
+              isCollapsed={isCollapsed}
+            />
+          </div>
+          {/* Footer Navigation */}
+          <div className="pt-2 border-t border-gray-200">
+            <NavItem
+              icon={Settings}
+              label="Settings"
+              isCollapsed={isCollapsed}
+              subItems={[
+                { href: '/settings/general', label: 'General' },
+                { href: '/settings/security', label: 'Security' },
+                { href: '/settings/notifications', label: 'Notifications' },
+                { href: '/settings/integrations', label: 'Integrations' },
+                { href: '/settings/billing', label: 'Billing' },
+              ]}
+            />
+          </div>
         </div>
       </nav>
 
