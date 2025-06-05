@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/Button"
-import { Card, CardContent, CardHeader } from "@/components/ui/Card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/Input"
+import { Button } from "@/components/ui/shadcn/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/shadcn/card"
+import { Label } from "@/components/ui/shadcn/label"
+import { Input } from "@/components/ui/shadcn/input"
 import { useQuery, useMutation } from "@tanstack/react-query";
 import apiClient from "@/lib/axios";
 

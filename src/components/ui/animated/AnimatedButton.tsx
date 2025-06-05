@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { buttonTap } from '@/animations/variants';
 import { HTMLMotionProps } from 'framer-motion';
-import { Icon, LoadingIcon } from './Icon';
 import { IconName } from '@/config/icons';
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
+import { Icon, LoadingIcon } from '../shadcn/icon';
 
 interface AnimatedButtonProps extends Omit<HTMLMotionProps<"button">, 'variant'> {
   variant?: 'primary' | 'secondary' | 'outline';

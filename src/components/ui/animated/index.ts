@@ -1,6 +1,6 @@
-export * from '../AnimatedButton';
-export * from '../AnimatedCard';
-export * from '../AnimatedList';
+export * from './AnimatedButton';
+export * from './AnimatedCard';
+export * from './AnimatedList';
 export * from '../../layout/PageTransition';
 
 // Re-export animation utilities

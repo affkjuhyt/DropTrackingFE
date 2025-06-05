@@ -1,10 +1,10 @@
 'use client';
 
 import { BarChart3, Container, LayoutDashboard, Search, ShoppingBagIcon, ShoppingCart, User2Icon, Warehouse } from "lucide-react";
-import { Input } from "../ui";
 import { Command } from "cmdk";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Input } from "../shadcn/input";
 
 type Route = {
   path: string;

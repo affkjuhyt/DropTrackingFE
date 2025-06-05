@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/shadcn/button';
 import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/shadcn/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/shadcn/accordion';
 import { cn } from '@/lib/utils';
-import CommandPalette from '../search/command';
+import CommandPalette from '../ui/search/command';
 
 type NavItemProps = {
   href?: string;
