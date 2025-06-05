@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { LayoutDashboard, Package, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,63 +11,153 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { cn } from '@/lib/utils';
+
+type NavItemProps = {
+  href?: string;
+  icon: React.ElementType;
+  label: string;
+  isCollapsed: boolean;
+  subItems?: Array<{ href: string; label: string }>;
+};
+
+const NavItem = ({ href, icon: Icon, label, isCollapsed, subItems }: NavItemProps) => {
+  if (subItems) {
+    return isCollapsed ? (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center justify-center w-full px-2 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+            <Icon className="h-5 w-5" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" side="right" className="w-48">
+          {subItems.map((item) => (
+            <DropdownMenuItem key={item.href} asChild>
+              <Link href={item.href} className="flex items-center space-x-3">
+                {item.label}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ) : (
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value={label.toLowerCase()} className="border-none">
+          <AccordionTrigger className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 [&[data-state=open]]:bg-gray-100">
+            <div className="flex items-center space-x-3">
+              <Icon className="h-5 w-5" />
+              <span>{label}</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-0">
+            <div className="space-y-1">
+              {subItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    );
+  }
+
+  return (
+    <Link
+      href={href || '/'}
+      className={cn(
+        "flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100",
+        isCollapsed && "justify-center px-2"
+      )}
+    >
+      <Icon className="h-5 w-5" />
+      {!isCollapsed && <span>{label}</span>}
+    </Link>
+  );
+}
 
 export default function Navbar({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
     <div className="flex h-screen">
       {/* Vertical Sidebar */}
-      <nav className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6">
-          <span className="text-xl font-bold">Dropship Tracker</span>
+      <nav className={cn(
+        "bg-white border-r border-gray-200 flex flex-col transition-all duration-300",
+        isCollapsed ? "w-16" : "w-64"
+      )}>
+        <div className={cn(
+          "p-6 flex items-center",
+          isCollapsed ? "justify-center" : "justify-between"
+        )}>
+          {!isCollapsed && <span className="text-xl font-bold">Dropship Tracker</span>}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-2"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </Button>
         </div>
-        <div className="flex-1 px-4 space-y-2">
-          <Link href="/" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-            <LayoutDashboard className="h-5 w-5" />
-            <span>Dashboard</span>
-          </Link>
-          <Link href="/buying" className='flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100'>
-            <ShoppingBagIcon className="h-5 w-5" />
-            <span>Buying</span>
-          </Link>
-          <Link href="/orders" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-            <ShoppingCart className="h-5 w-5" />
-            <span>Orders</span>
-          </Link>
-          <div className="relative group">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="stocks" className="border-none">
-                <AccordionTrigger className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 [&[data-state=open]]:bg-gray-100">
-                  <div className="flex items-center space-x-3">
-                    <Warehouse className="h-5 w-5" />
-                    <span>Stock</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-1 pb-0">
-                  <div className="space-y-1">
-                    <Link href="/stocks/products" className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
-                      Products
-                    </Link>
-                    <Link href="/stocks/categories" className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
-                      Categories
-                    </Link>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-          <Link href="/shipping" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-            <Container className="h-5 w-5" />
-            <span>Shipping</span>
-          </Link>
-          <Link href="/users" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-            <User2Icon className="h-5 w-5" />
-            <span>Users</span>
-          </Link>
-          <Link href="/analytics" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-            <BarChart3 className="h-5 w-5" />
-            <span>Analytics</span>
-          </Link>
+        <div className="flex-1 px-2 space-y-2">
+        <NavItem
+          href="/"
+          icon={LayoutDashboard}
+          label="Dashboard"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          href="/buying"
+          icon={ShoppingBagIcon}
+          label="Buying"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          icon={ShoppingCart}
+          label="Selling"
+          isCollapsed={isCollapsed}
+          subItems={[
+            { href: '/selling/customers', label: 'Customers' },
+            { href: '/selling/orders', label: 'Orders' },
+            { href: '/selling/invoices', label: 'Invoices' },
+            { href: '/selling/sales-partners', label: 'Sales Partners' },
+            { href: '/selling/sales-persons', label: 'Sales Persons' },
+          ]}
+        />
+        <NavItem
+          icon={Warehouse}
+          label="Stock"
+          isCollapsed={isCollapsed}
+          subItems={[
+            { href: '/stocks/products', label: 'Products' },
+            { href: '/stocks/categories', label: 'Categories' },
+          ]}
+        />
+        <NavItem
+          href="/shipping"
+          icon={Container}
+          label="Shipping"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          href="/users"
+          icon={User2Icon}
+          label="Users"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          href="/analytics"
+          icon={BarChart3}
+          label="Analytics"
+          isCollapsed={isCollapsed}
+        />
         </div>
       </nav>
 
