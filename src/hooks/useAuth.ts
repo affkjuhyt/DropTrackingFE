@@ -16,7 +16,7 @@ export const useAuth = () => {
     mutationFn: async (credentials) => {
       const response = await apiClient.post('/auth/login', credentials);
       const { access_token } = response.data;
-      document.cookie = `token=${access_token}; path=/; domain=${window.location.hostname}; SameSite=Strict;`;
+      localStorage.setItem('token', access_token);
       return response.data;
     }
   });
@@ -29,8 +29,7 @@ export const useAuth = () => {
   });
 
   const logout = () => {
-    const domain = window.location.hostname;
-    document.cookie = `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict; httpOnly=false`;
+    localStorage.removeItem('token');
     window.location.href = '/auth/signin';
   };
 

@@ -1,39 +1,5 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-const getCookie = (name: string): string | undefined => {
-  if (typeof window === 'undefined') {
-    console.log('[getCookie] Running in server-side, returning undefined');
-    return undefined;
-  }
-
-  const cookieString = document.cookie;
-  console.log('[getCookie] Cookie string:', cookieString);
-
-  if (!cookieString) {
-    console.log('[getCookie] Cookie string is empty');
-    return undefined;
-  }
-
-  const cookies = cookieString.split(';').map(cookie => cookie.trim());
-  console.log('[getCookie] All cookies:', cookies);
-
-  for (const cookie of cookies) {
-    console.log('[getCookie] Processing cookie:', cookie);
-    if (cookie.startsWith(`${name}=`)) {
-      const value = cookie.substring(name.length + 1);
-      console.log(`[getCookie] Found ${name}:`, value);
-      return value;
-    }
-  }
-
-  console.log(`[getCookie] ${name} not found in cookies`);
-  return undefined;
-};
-
-const token = getCookie('token');
-
-console.log("token: ", token)
-
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
@@ -43,7 +9,7 @@ const apiClient = axios.create({
 
 const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   console.log('[Axios] Processing request config:', config.url);
-  console.log('[Axios] Token from cookie:', token ? 'Found' : 'Not found');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
     console.log('[Axios] Added Authorization header with token');

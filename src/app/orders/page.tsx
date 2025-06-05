@@ -1,72 +1,215 @@
+"use client";
+
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { DataTable } from "@/components/ui/data-table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
+import { Badge } from "@/components/ui/badge";
+import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown, ListFilter } from "lucide-react";
+
+interface Order {
+  id: string;
+  customer: string;
+  products: string;
+  total: number;
+  status: string;
+  date: string;
+}
+
 export default function Orders() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
+  const [filters, setFilters] = useState({
+    status: '',
+    dateRange: '',
+  });
+
+  const handleSort = ({ id }: any) => {
+
+  }
+
+  const handleAddSale = () => {
+
+  }
+
+  const handleEdit = ({ id }: any) => {
+
+  }
+  
+
+  const handleDelete = ({ id }: any) => {
+
+  }
+
+  const columns = [
+    {
+      accessorKey: 'id',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('id')}>
+          Order ID
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    { accessorKey: 'customer', header: 'Customer' },
+    { accessorKey: 'products', header: 'Products' },
+    {
+      accessorKey: 'total',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('total')}>
+          Total
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }: any) => {
+        const status = row.getValue('status');
+        return (
+          <Badge
+            variant={status === 'Delivered' ? 'secondary' : status === 'Processing' ? 'outline' : 'default'}
+          >
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'date',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('date')}>
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
+      id: 'actions',
+      cell: ({ row }: { row: any }) => (
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>View</Button>
+          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Delete</Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
-          <p className="mt-2 text-sm text-gray-700">A list of all orders from your customers.</p>
-        </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-          >
-            Export orders
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-8 flex flex-col">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Order ID</th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer</th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Products</th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total</th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date</th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  <tr>
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">#12345</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">John Doe</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Wireless Earbuds (2)</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">$179.98</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">Delivered</span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2024-02-15</td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                      <button className="text-indigo-600 hover:text-indigo-900">View details</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">#12344</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Jane Smith</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Smart Watch (1)</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">$199.99</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <span className="inline-flex rounded-full bg-yellow-100 px-2 text-xs font-semibold leading-5 text-yellow-800">Processing</span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2024-02-14</td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                      <button className="text-indigo-600 hover:text-indigo-900">View details</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-xl font-bold">Orders</CardTitle>
+          <div className="flex items-center space-x-2">
+            <Button
+              onClick={() => setIsAddDialogOpen(true)}
+              className="flex items-center space-x-2"
+            >
+              <PlusIcon className="h-4 w-4" />
+              <span>Add Sale</span>
+            </Button>
+            <Button variant="outline" className="flex items-center space-x-2">
+              <ImportIcon className="h-4 w-4" />
+              <span>Import</span>
+            </Button>
+            <Button variant="outline" className="flex items-center space-x-2">
+              <RefreshCw className="h-4 w-4" />
+              <span>Reload</span>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between space-x-4 py-4">
+            <div className="flex flex-1 items-center space-x-2">
+              <div className="relative w-full max-w-sm">
+                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                <Input
+                  placeholder="Search orders..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filters.dateRange} onValueChange={(value) => setFilters({ ...filters, dateRange: value })}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by date" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                  <SelectItem value="year">This Year</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </div>
-      </div>
+
+          <DataTable
+            columns={columns}
+            data={[]}
+            pageCount={10}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        </CardContent>
+      </Card>
+
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Sale</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="customer">Customer</Label>
+              <Input id="customer" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="products">Products</Label>
+              <Input id="products" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="total">Total</Label>
+              <Input id="total" type="number" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="status">Status</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => handleAddSale()}>Add Sale</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

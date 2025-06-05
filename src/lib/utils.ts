@@ -6,7 +6,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getToken = () => {
-  const cookies = document.cookie.split(';');
-  const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
-  return tokenCookie ? tokenCookie.split('=')[1] : null;
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('token');
 };

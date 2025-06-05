@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { LayoutDashboard, Package, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2 } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 export default function Navbar({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
@@ -24,13 +25,43 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
             <LayoutDashboard className="h-5 w-5" />
             <span>Dashboard</span>
           </Link>
-          <Link href="/products" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-            <Package className="h-5 w-5" />
-            <span>Products</span>
+          <Link href="/buying" className='flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100'>
+            <ShoppingBagIcon className="h-5 w-5" />
+            <span>Buying</span>
           </Link>
           <Link href="/orders" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
             <ShoppingCart className="h-5 w-5" />
             <span>Orders</span>
+          </Link>
+          <div className="relative group">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="stocks" className="border-none">
+                <AccordionTrigger className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 [&[data-state=open]]:bg-gray-100">
+                  <div className="flex items-center space-x-3">
+                    <Warehouse className="h-5 w-5" />
+                    <span>Stock</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-1 pb-0">
+                  <div className="space-y-1">
+                    <Link href="/stocks/products" className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+                      Products
+                    </Link>
+                    <Link href="/stocks/categories" className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+                      Categories
+                    </Link>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+          <Link href="/shipping" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+            <Container className="h-5 w-5" />
+            <span>Shipping</span>
+          </Link>
+          <Link href="/users" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+            <User2Icon className="h-5 w-5" />
+            <span>Users</span>
           </Link>
           <Link href="/analytics" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
             <BarChart3 className="h-5 w-5" />
