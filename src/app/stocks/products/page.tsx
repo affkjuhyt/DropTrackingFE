@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select";
 import { Checkbox } from "@/components/ui/shadcn/checkbox";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
+import Link from 'next/link';
 
 interface Product {
   id: string;
@@ -260,9 +261,14 @@ export default function Products() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
-              <Button>Lưu</Button>
+            <div className="flex justify-between gap-2">
+              <Button variant="outline" asChild>
+                <Link href="products/new-product">Edit Full Form</Link>
+              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
+                <Button>Lưu</Button>
+              </div>
             </div>
           </div>
         </DialogContent>

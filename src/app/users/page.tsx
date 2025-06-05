@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/shadcn/button";
 import { PlusIcon, SearchIcon, RefreshCw } from "lucide-react";
 import { DataTable } from "@/components/ui/shadcn/data-table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/shadcn/dialog";
+import Link from 'next/link';
 
 interface User {
   id: string;
@@ -180,9 +181,14 @@ const Users = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsAdding(false)}>Hủy</Button>
-              <Button>Lưu</Button>
+            <div className="flex justify-between gap-2">
+              <Button variant="outline" asChild>
+                <Link href="/users/new-user">Edit Full Form</Link>
+              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setIsAdding(false)}>Hủy</Button>
+                <Button>Lưu</Button>
+              </div>
             </div>
           </div>
         </DialogContent>
