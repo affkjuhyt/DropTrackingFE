@@ -7,6 +7,7 @@ import { StoreProvider } from '@/providers/StoreProvider';
 import { IconProvider } from '@/providers/IconProvider';
 import { usePathname } from 'next/navigation';
 import { NO_NAVBAR_ROUTES, type AuthRoutes } from '@/constants/routes';
+import { BreadcrumbNav } from '@/components/layout/BreadcrumbNav';
 
 export default function RootLayout({
   children,
@@ -15,7 +16,6 @@ export default function RootLayout({
 }) {
   const pathname = usePathname() as AuthRoutes;
 
-  
   return (
     <html lang="en">
       <body>
@@ -26,7 +26,12 @@ export default function RootLayout({
                 {NO_NAVBAR_ROUTES.includes(pathname) ? (
                   children
                 ) : (
-                  <Navbar>{children}</Navbar>
+                  <Navbar>
+                    <div className="flex-1 p-8 pt-6">
+                      {<BreadcrumbNav />}
+                      {children}
+                    </div>
+                  </Navbar>
                 )}
               </div>
             </QueryProvider>
