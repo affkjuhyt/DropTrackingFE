@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { cn } from '@/lib/utils';
+import CommandPalette from '../search/command';
 
 type NavItemProps = {
   href?: string;
@@ -114,10 +114,15 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
           isCollapsed={isCollapsed}
         />
         <NavItem
-          href="/buying"
           icon={ShoppingBagIcon}
           label="Buying"
           isCollapsed={isCollapsed}
+          subItems={[
+            { href: '/buying/purchase-orders', label: 'Purchase Orders' },
+            { href: '/buying/purchase-invoices', label: 'Purchase Invoices' },
+            { href: '/buying/suppliers', label: 'Suppliers' },
+            { href: '/buying/contacts', label: 'Contacts' },
+          ]}
         />
         <NavItem
           icon={ShoppingCart}
@@ -167,12 +172,7 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
         <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 py-8">
           <div className="flex-1 max-w-lg">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-10 w-full"
-              />
+              <CommandPalette />
             </div>
           </div>
           <div className="flex items-center space-x-4">
