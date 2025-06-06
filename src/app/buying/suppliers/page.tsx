@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card";
 import { Input } from "@/components/ui/shadcn/input";
 import { Label } from "@/components/ui/shadcn/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select";
 import { Button } from "@/components/ui/shadcn/button";
-import { PlusIcon, SearchIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/shadcn/dialog";
+import { PlusIcon, SearchIcon, RefreshCcw } from "lucide-react";
 import { DataTable } from "@/components/ui/shadcn/data-table";
+import { useRouter } from 'next/navigation';
 
-interface Suppliers {
+interface Supplier {
   id: string;
   supplierName: string;
   supplierGroup: string;
@@ -20,7 +21,8 @@ interface Suppliers {
 }
 
 const Suppliers = () => {
-  const [isAdding, setIsAdding] = useState(false);
+  const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
@@ -29,44 +31,52 @@ const Suppliers = () => {
   });
 
   const columns = [
-    { accessorKey: 'supplierName', header: 'Supplier Name' },
-    { accessorKey: 'supplierGroup', header: 'Supplier Group' },
-    { accessorKey: 'priceList', header: 'Price List' },
-    { accessorKey: 'role', header: 'Role' },
-    { accessorKey: 'allowance', header: 'Allowance (%)' },
+    { accessorKey: 'supplierName', header: 'Tên nhà cung cấp' },
+    { accessorKey: 'supplierGroup', header: 'Nhóm nhà cung cấp' },
+    { accessorKey: 'priceList', header: 'Bảng giá' },
+    { accessorKey: 'role', header: 'Vai trò' },
+    { accessorKey: 'allowance', header: 'Chiết khấu (%)' },
     {
       id: 'actions',
       cell: ({ row }: any) => (
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Edit</Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Delete</Button>
+          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Sửa</Button>
+          <Button variant="outline" size="sm" onClick={() => handleViewDetails(row.original.id)}>Chi tiết</Button>
+          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Xóa</Button>
         </div>
       ),
     },
   ];
 
   const handleAdd = () => {
-    setIsAdding(true);
+    setIsDialogOpen(true);
   };
 
-  const handleEdit = (supplier: Suppliers) => {
+  const handleEdit = (supplier: Supplier) => {
     // Implement edit logic
+  };
+
+  const handleViewDetails = (id: string) => {
+    router.push(`/suppliers/${id}`);
   };
 
   const handleDelete = (id: string) => {
     // Implement delete logic
   };
 
+  const handleRefresh = () => {
+    // Implement refresh logic
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
-      {/* List và Search Section */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Buying List</CardTitle>
+          <CardTitle>Danh sách nhà cung cấp</CardTitle>
           <div className="flex gap-4">
             <div className="flex gap-2">
               <Input
-                placeholder="Search..."
+                placeholder="Tìm kiếm..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64"
@@ -74,43 +84,44 @@ const Suppliers = () => {
               <Button variant="outline" size="icon">
                 <SearchIcon className="h-4 w-4" />
               </Button>
+              <Button variant="outline" size="icon" onClick={handleRefresh}>
+                <RefreshCcw className="h-4 w-4" />
+              </Button>
             </div>
             <Button onClick={handleAdd}>
               <PlusIcon className="h-4 w-4 mr-2" />
-              Add Buying
+              Thêm nhà cung cấp
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {/* Filters */}
           <div className="flex gap-4 mb-4">
             <div className="w-64">
-              <Label>Filter by Group</Label>
+              <Label>Lọc theo nhóm</Label>
               <Select value={filters.supplierGroup} onValueChange={(value) => setFilters(prev => ({ ...prev, supplierGroup: value }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select group" />
+                  <SelectValue placeholder="Chọn nhóm" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="group1">Group 1</SelectItem>
-                  <SelectItem value="group2">Group 2</SelectItem>
+                  <SelectItem value="group1">Nhóm 1</SelectItem>
+                  <SelectItem value="group2">Nhóm 2</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="w-64">
-              <Label>Filter by Role</Label>
+              <Label>Lọc theo vai trò</Label>
               <Select value={filters.role} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
+                  <SelectValue placeholder="Chọn vai trò" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="admin">Quản trị viên</SelectItem>
+                  <SelectItem value="manager">Quản lý</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {/* Data Table */}
           <DataTable
             columns={columns}
             data={[]}
@@ -121,100 +132,75 @@ const Suppliers = () => {
         </CardContent>
       </Card>
 
-      {/* Add/Edit Form */}
-      {isAdding && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Add Buying</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Thêm nhà cung cấp mới</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="supplierName">Supplier Name</Label>
-                <Input id="supplierName" placeholder="Enter supplier name" />
+                <Label htmlFor="supplierName">Tên nhà cung cấp</Label>
+                <Input id="supplierName" placeholder="Nhập tên nhà cung cấp" />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="supplierGroup">Supplier Group</Label>
+                <Label htmlFor="supplierGroup">Nhóm nhà cung cấp</Label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select supplier group" />
+                    <SelectValue placeholder="Chọn nhóm nhà cung cấp" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="group1">Group 1</SelectItem>
-                    <SelectItem value="group2">Group 2</SelectItem>
+                    <SelectItem value="group1">Nhóm 1</SelectItem>
+                    <SelectItem value="group2">Nhóm 2</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="priceList">Default Buying Price List</Label>
+                <Label htmlFor="priceList">Bảng giá mặc định</Label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select price list" />
+                    <SelectValue placeholder="Chọn bảng giá" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="list1">Price List 1</SelectItem>
-                    <SelectItem value="list2">Price List 2</SelectItem>
+                    <SelectItem value="list1">Bảng giá 1</SelectItem>
+                    <SelectItem value="list2">Bảng giá 2</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role">Role Allowed to Override Stop Action</Label>
+                <Label htmlFor="role">Vai trò được phép ghi đè</Label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
+                    <SelectValue placeholder="Chọn vai trò" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="admin">Quản trị viên</SelectItem>
+                    <SelectItem value="manager">Quản lý</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="allowance">Blanket Order Allowance (%)</Label>
-                <Input id="allowance" type="number" placeholder="Enter allowance percentage" />
+                <Label htmlFor="allowance">Chiết khấu đơn hàng (%)</Label>
+                <Input id="allowance" type="number" placeholder="Nhập phần trăm chiết khấu" />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsAdding(false)}>Cancel</Button>
-              <Button>Save</Button>
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => router.push('/suppliers/new-supplier')}>
+                Chỉnh sửa form đầy đủ
+              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Hủy</Button>
+                <Button>Lưu</Button>
+              </div>
             </div>
-
-            <Tabs defaultValue="comments" className="mt-6">
-              <TabsList>
-                <TabsTrigger value="comments">Comments</TabsTrigger>
-                <TabsTrigger value="activity">Activity</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="comments" className="space-y-4">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="space-y-4">
-                      <Input placeholder="Add a comment..." />
-                      {/* Comment list will go here */}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="activity" className="space-y-4">
-                <Card>
-                  <CardContent className="pt-6">
-                    {/* Activity list will go here */}
-                    <div className="text-sm text-gray-500">
-                      No activity to show
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

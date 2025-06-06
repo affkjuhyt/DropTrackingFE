@@ -12,65 +12,37 @@ import { Badge } from "@/components/ui/shadcn/badge";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
 import Link from 'next/link';
 
-interface Order {
+interface Shipment {
   id: string;
-  customer: string;
-  products: string;
-  total: number;
+  code: string;
   status: string;
-  date: string;
+  from: string;
+  to: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export default function Orders() {
-  const [isAdding, setIsAdding] = useState(false);
+export default function Shipments() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
   const [filters, setFilters] = useState({
-    status: '',
-    dateRange: ''
+    status: ''
   });
 
-  const columns = [
-    { accessorKey: 'id', header: 'Mã đơn hàng' },
-    { accessorKey: 'customer', header: 'Khách hàng' },
-    { accessorKey: 'products', header: 'Sản phẩm' },
-    { accessorKey: 'total', header: 'Tổng tiền' },
-    {
-      accessorKey: 'status',
-      header: 'Trạng thái',
-      cell: ({ row }: { row: any }) => {
-        const status = row.getValue('status');
-        return (
-          <Badge
-            variant={status === 'delivered' ? 'default' : status === 'processing' ? 'secondary' : 'outline'}
-          >
-            {status === 'delivered' ? 'Đã giao' : status === 'processing' ? 'Đang xử lý' : 'Chờ xử lý'}
-          </Badge>
-        );
-      },
-    },
-    { 
-      accessorKey: 'date', 
-      header: 'Ngày tạo',
-      cell: ({ row }: { row: any }) => new Date(row.getValue('date')).toLocaleDateString()
-    },
-    {
-      id: 'actions',
-      cell: ({ row }: { row: any }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Sửa</Button>
-          <Button variant="outline" size="sm" onClick={() => handleViewDetails(row.original)}>Chi tiết</Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Xóa</Button>
-        </div>
-      ),
-    },
-  ];
-
-  const handleAdd = () => {
-    setIsAdding(true);
+  const handleSort = (key: string) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
   };
 
-  const handleEdit = (order: Order) => {
+  const handleAdd = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  const handleEdit = (shipment: Shipment) => {
     // Implement edit logic
   };
 
@@ -78,19 +50,58 @@ export default function Orders() {
     // Implement delete logic
   };
 
-  const handleViewDetails = (order: Order) => {
-    // Implement view details logic
+  const handleImport = () => {
+    // Implement import logic
   };
 
   const handleRefresh = () => {
     // Implement refresh logic
   };
 
+  const columns = [
+    { accessorKey: 'code', header: 'Mã vận đơn' },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('createdAt')}>
+          Ngày tạo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    { accessorKey: 'from', header: 'Từ' },
+    { accessorKey: 'to', header: 'Đến' },
+    {
+      accessorKey: 'status',
+      header: 'Trạng thái',
+      cell: ({ row }: any) => {
+        const status = row.getValue('status');
+        return (
+          <Badge
+            variant={status === 'delivered' ? 'secondary' : status === 'pending' ? 'outline' : 'default'}
+          >
+            {status === 'delivered' ? 'Đã giao' : status === 'pending' ? 'Đang giao' : 'Đã hủy'}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      cell: ({ row }: { row: any }) => (
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Sửa</Button>
+          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Chi tiết</Button>
+          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Xóa</Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Danh sách đơn hàng</CardTitle>
+          <CardTitle>Danh sách vận đơn</CardTitle>
           <div className="flex gap-4">
             <div className="flex gap-2">
               <Input
@@ -106,9 +117,13 @@ export default function Orders() {
                 <RefreshCw className="h-4 w-4" />
               </Button>
             </div>
+            <Button onClick={handleImport}>
+              <ImportIcon className="h-4 w-4 mr-2" />
+              Import
+            </Button>
             <Button onClick={handleAdd}>
               <PlusIcon className="h-4 w-4 mr-2" />
-              Thêm đơn hàng
+              Thêm vận đơn
             </Button>
           </div>
         </CardHeader>
@@ -116,34 +131,22 @@ export default function Orders() {
           {/* Filters */}
           <div className="flex gap-4 mb-4">
             <div className="w-64">
-              <Label>Lọc theo trạng thái</Label>
+              <Label>Trạng thái</Label>
               <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
                   <SelectItem value="delivered">Đã giao</SelectItem>
-                  <SelectItem value="processing">Đang xử lý</SelectItem>
-                  <SelectItem value="pending">Chờ xử lý</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-64">
-              <Label>Lọc theo thời gian</Label>
-              <Select value={filters.dateRange} onValueChange={(value) => setFilters(prev => ({ ...prev, dateRange: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn thời gian" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="today">Hôm nay</SelectItem>
-                  <SelectItem value="week">Tuần này</SelectItem>
-                  <SelectItem value="month">Tháng này</SelectItem>
-                  <SelectItem value="year">Năm nay</SelectItem>
+                  <SelectItem value="pending">Đang giao</SelectItem>
+                  <SelectItem value="cancelled">Đã hủy</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
+          {/* Data Table */}
           <DataTable
             columns={columns}
             data={[]}
@@ -154,26 +157,27 @@ export default function Orders() {
         </CardContent>
       </Card>
 
-      <Dialog open={isAdding} onOpenChange={setIsAdding}>
+      {/* Add/Edit Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Thêm đơn hàng mới</DialogTitle>
+            <DialogTitle>Thêm vận đơn mới</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="customer">Khách hàng</Label>
-                <Input id="customer" placeholder="Chọn khách hàng" />
+                <Label htmlFor="code">Mã vận đơn</Label>
+                <Input id="code" placeholder="Nhập mã vận đơn" />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="products">Sản phẩm</Label>
-                <Input id="products" placeholder="Chọn sản phẩm" />
+                <Label htmlFor="from">Từ</Label>
+                <Input id="from" placeholder="Nhập địa chỉ gửi" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="total">Tổng tiền</Label>
-                <Input id="total" type="number" placeholder="Nhập tổng tiền" />
+                <Label htmlFor="to">Đến</Label>
+                <Input id="to" placeholder="Nhập địa chỉ nhận" />
               </div>
 
               <div className="space-y-2">
@@ -184,8 +188,8 @@ export default function Orders() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="delivered">Đã giao</SelectItem>
-                    <SelectItem value="processing">Đang xử lý</SelectItem>
-                    <SelectItem value="pending">Chờ xử lý</SelectItem>
+                    <SelectItem value="pending">Đang giao</SelectItem>
+                    <SelectItem value="cancelled">Đã hủy</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -193,10 +197,10 @@ export default function Orders() {
 
             <div className="flex justify-between gap-2">
               <Button variant="outline" asChild>
-                <Link href="/orders/new-order">Edit Full Form</Link>
+                <Link href="/shipments/new-shipment">Edit Full Form</Link>
               </Button>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setIsAdding(false)}>Hủy</Button>
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
                 <Button>Lưu</Button>
               </div>
             </div>

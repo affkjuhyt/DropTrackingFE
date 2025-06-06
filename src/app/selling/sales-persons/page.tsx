@@ -12,22 +12,26 @@ import { Badge } from "@/components/ui/shadcn/badge";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown, ListFilter } from "lucide-react";
 import Link from 'next/link';
 
-interface Invoice {
+interface SalesPerson {
   id: string;
-  customer: string;
-  products: string;
-  total: number;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
   status: string;
-  date: string;
+  joinDate: string;
+  salesCount: number;
+  totalRevenue: number;
 }
 
-export default function Invoices() {
+export default function SalesPersons() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
   const [filters, setFilters] = useState({
     status: '',
+    role: '',
     dateRange: '',
   });
 
@@ -35,7 +39,7 @@ export default function Invoices() {
 
   }
 
-  const handleAddInvoice = () => {
+  const handleAddPerson = () => {
 
   }
 
@@ -53,14 +57,25 @@ export default function Invoices() {
   };
 
   const columns = [
-    { accessorKey: 'id', header: 'Mã hóa đơn' },
-    { accessorKey: 'customer', header: 'Khách hàng' },
-    { accessorKey: 'products', header: 'Sản phẩm' },
+    { accessorKey: 'id', header: 'Mã nhân viên' },
+    { accessorKey: 'name', header: 'Tên nhân viên' },
+    { accessorKey: 'email', header: 'Email' },
+    { accessorKey: 'phone', header: 'Số điện thoại' },
+    { accessorKey: 'role', header: 'Chức vụ' },
     {
-      accessorKey: 'total',
+      accessorKey: 'salesCount',
       header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('total')}>
-          Tổng tiền
+        <Button variant="ghost" onClick={() => handleSort('salesCount')}>
+          Số đơn hàng
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
+      accessorKey: 'totalRevenue',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('totalRevenue')}>
+          Doanh thu
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -72,18 +87,18 @@ export default function Invoices() {
         const status = row.getValue('status');
         return (
           <Badge
-            variant={status === 'Paid' ? 'secondary' : status === 'Pending' ? 'outline' : 'default'}
+            variant={status === 'Active' ? 'secondary' : status === 'Inactive' ? 'outline' : 'default'}
           >
-            {status}
+            {status === 'Active' ? 'Đang làm việc' : status === 'Inactive' ? 'Đã nghỉ việc' : 'Tạm nghỉ'}
           </Badge>
         );
       },
     },
     {
-      accessorKey: 'date',
+      accessorKey: 'joinDate',
       header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('date')}>
-          Ngày tạo
+        <Button variant="ghost" onClick={() => handleSort('joinDate')}>
+          Ngày vào làm
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -104,7 +119,7 @@ export default function Invoices() {
     <div className="container mx-auto py-6 space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Danh sách hóa đơn</CardTitle>
+          <CardTitle>Danh sách nhân viên bán hàng</CardTitle>
           <div className="flex gap-4">
             <div className="flex gap-2">
               <Input
@@ -122,7 +137,7 @@ export default function Invoices() {
             </div>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <PlusIcon className="h-4 w-4 mr-2" />
-              Thêm hóa đơn
+              Thêm nhân viên
             </Button>
           </div>
         </CardHeader>
@@ -137,14 +152,28 @@ export default function Invoices() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="paid">Đã thanh toán</SelectItem>
-                  <SelectItem value="pending">Chưa thanh toán</SelectItem>
-                  <SelectItem value="cancelled">Đã hủy</SelectItem>
+                  <SelectItem value="active">Đang làm việc</SelectItem>
+                  <SelectItem value="inactive">Đã nghỉ việc</SelectItem>
+                  <SelectItem value="leave">Tạm nghỉ</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="w-64">
-              <Label>Lọc theo ngày</Label>
+              <Label>Lọc theo chức vụ</Label>
+              <Select value={filters.role} onValueChange={(value) => setFilters({ ...filters, role: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn chức vụ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="manager">Quản lý</SelectItem>
+                  <SelectItem value="leader">Trưởng nhóm</SelectItem>
+                  <SelectItem value="staff">Nhân viên</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-64">
+              <Label>Lọc theo ngày vào làm</Label>
               <Select value={filters.dateRange} onValueChange={(value) => setFilters({ ...filters, dateRange: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn ngày" />
@@ -174,23 +203,37 @@ export default function Invoices() {
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Thêm hóa đơn mới</DialogTitle>
+            <DialogTitle>Thêm nhân viên mới</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="customer">Khách hàng</Label>
-                <Input id="customer" placeholder="Nhập tên khách hàng" />
+                <Label htmlFor="name">Tên nhân viên</Label>
+                <Input id="name" placeholder="Nhập tên nhân viên" />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="products">Sản phẩm</Label>
-                <Input id="products" placeholder="Nhập sản phẩm" />
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="Nhập email" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="total">Tổng tiền</Label>
-                <Input id="total" type="number" placeholder="Nhập tổng tiền" />
+                <Label htmlFor="phone">Số điện thoại</Label>
+                <Input id="phone" placeholder="Nhập số điện thoại" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="role">Chức vụ</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn chức vụ" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manager">Quản lý</SelectItem>
+                    <SelectItem value="leader">Trưởng nhóm</SelectItem>
+                    <SelectItem value="staff">Nhân viên</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -200,9 +243,9 @@ export default function Invoices() {
                     <SelectValue placeholder="Chọn trạng thái" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="paid">Đã thanh toán</SelectItem>
-                    <SelectItem value="pending">Chưa thanh toán</SelectItem>
-                    <SelectItem value="cancelled">Đã hủy</SelectItem>
+                    <SelectItem value="active">Đang làm việc</SelectItem>
+                    <SelectItem value="inactive">Đã nghỉ việc</SelectItem>
+                    <SelectItem value="leave">Tạm nghỉ</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -210,7 +253,7 @@ export default function Invoices() {
 
             <div className="flex justify-between gap-2">
               <Button variant="outline" asChild>
-                <Link href="/invoices/new-invoice">Edit Full Form</Link>
+                <Link href="/sales-persons/new-person">Edit Full Form</Link>
               </Button>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>

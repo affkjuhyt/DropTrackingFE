@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
-import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, BarChart3, Search, Bell, User, LogOut, Calendar, Inbox, CalendarCheck2, ShoppingBagIcon, User2Icon, Warehouse, Container, ChevronLeft, ChevronRight, Settings, WalletMinimal } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -145,19 +145,25 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
               subItems={[
                 { href: '/stocks/products', label: 'Products' },
                 { href: '/stocks/categories', label: 'Categories' },
+                { href: '/stocks/shipments', label: 'Shipments' },
               ]}
-            />
-            <NavItem
-              href="/shipping"
-              icon={Container}
-              label="Shipping"
-              isCollapsed={isCollapsed}
             />
             <NavItem
               href="/users"
               icon={User2Icon}
               label="Users"
               isCollapsed={isCollapsed}
+            />
+            <NavItem
+              icon={WalletMinimal}
+              label="Accounting"
+              isCollapsed={isCollapsed}
+              subItems={[
+                { href: '/accounting/shipping-rule', label: 'Shipping Rule' },
+                { href: '/accounting/tax', label: 'Tax' },
+                { href: '/accounting/settings', label: 'Account Setting' },
+                { href: '/accounting/financial-statement', label: 'Financial Statement' },
+              ]}
             />
             <NavItem
               href="/analytics"

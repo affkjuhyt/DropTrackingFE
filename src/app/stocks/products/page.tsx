@@ -8,7 +8,7 @@ import { DataTable } from "@/components/ui/shadcn/data-table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/shadcn/dialog";
 import { Label } from "@/components/ui/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select";
-import { Checkbox } from "@/components/ui/shadcn/checkbox";
+import { Badge } from "@/components/ui/shadcn/badge";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
 import Link from 'next/link';
 
@@ -23,7 +23,6 @@ interface Product {
 }
 
 export default function Products() {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -32,65 +31,6 @@ export default function Products() {
     category: '',
     status: ''
   });
-
-  const columns = [
-    {
-      id: 'select',
-      header: ({ table }: any) => (
-        <Checkbox
-          checked={table?.getIsAllPageRowsSelected?.() || false}
-          onCheckedChange={(value) => table?.toggleAllPageRowsSelected?.(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }: any) => (
-        <Checkbox
-          checked={row?.getIsSelected?.() || false}
-          onCheckedChange={(value) => row?.toggleSelected?.(!!value)}
-          aria-label="Select row"
-        />
-      ),
-    },
-    {
-      accessorKey: 'name',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('name')}>
-          Tên sản phẩm
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    },
-    { accessorKey: 'sku', header: 'SKU' },
-    {
-      accessorKey: 'price',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('price')}>
-          Giá
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    },
-    {
-      accessorKey: 'stock',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('stock')}>
-          Tồn kho
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    },
-    { accessorKey: 'category', header: 'Danh mục' },
-    { accessorKey: 'status', header: 'Trạng thái' },
-    {
-      id: 'actions',
-      cell: ({ row }: { row: any }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Sửa</Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Xóa</Button>
-        </div>
-      ),
-    },
-  ];
 
   const handleSort = (key: string) => {
     setSortConfig(prev => ({
@@ -111,10 +51,6 @@ export default function Products() {
     // Implement delete logic
   };
 
-  const handleDeleteSelected = () => {
-    // Implement bulk delete logic
-  };
-
   const handleImport = () => {
     // Implement import logic
   };
@@ -123,8 +59,56 @@ export default function Products() {
     // Implement refresh logic
   };
 
+  const columns = [
+    { accessorKey: 'name', header: 'Tên sản phẩm' },
+    { accessorKey: 'sku', header: 'SKU' },
+    {
+      accessorKey: 'price',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('price')}>
+          Giá
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
+      accessorKey: 'stock',
+      header: ({ column }: any) => (
+        <Button variant="ghost" onClick={() => handleSort('stock')}>
+          Tồn kho
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    { accessorKey: 'category', header: 'Danh mục' },
+    {
+      accessorKey: 'status',
+      header: 'Trạng thái',
+      cell: ({ row }: any) => {
+        const status = row.getValue('status');
+        return (
+          <Badge
+            variant={status === 'active' ? 'secondary' : status === 'inactive' ? 'outline' : 'default'}
+          >
+            {status === 'active' ? 'Đang bán' : status === 'inactive' ? 'Ngừng bán' : 'Hết hàng'}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      cell: ({ row }: { row: any }) => (
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Sửa</Button>
+          <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Chi tiết</Button>
+          <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Xóa</Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto py-6 space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Danh sách sản phẩm</CardTitle>
@@ -153,17 +137,16 @@ export default function Products() {
             </Button>
           </div>
         </CardHeader>
-
         <CardContent>
           {/* Filters */}
           <div className="flex gap-4 mb-4">
             <div className="w-64">
               <Label>Danh mục</Label>
-              <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
-                <SelectTrigger>
+              <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>                <SelectTrigger>
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
                   <SelectItem value="electronics">Điện tử</SelectItem>
                   <SelectItem value="clothing">Thời trang</SelectItem>
                   <SelectItem value="accessories">Phụ kiện</SelectItem>
@@ -172,11 +155,11 @@ export default function Products() {
             </div>
             <div className="w-64">
               <Label>Trạng thái</Label>
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
-                <SelectTrigger>
+              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>                <SelectTrigger>
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
                   <SelectItem value="active">Đang bán</SelectItem>
                   <SelectItem value="inactive">Ngừng bán</SelectItem>
                   <SelectItem value="outofstock">Hết hàng</SelectItem>
@@ -184,15 +167,6 @@ export default function Products() {
               </Select>
             </div>
           </div>
-
-          {/* Selected Actions */}
-          {selectedItems.length > 0 && (
-            <div className="mb-4">
-              <Button variant="destructive" onClick={handleDeleteSelected}>
-                Xóa {selectedItems.length} mục đã chọn
-              </Button>
-            </div>
-          )}
 
           {/* Data Table */}
           <DataTable
@@ -229,8 +203,8 @@ export default function Products() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="stock">Số lượng tồn</Label>
-                <Input id="stock" type="number" placeholder="Nhập số lượng" />
+                <Label htmlFor="stock">Tồn kho</Label>
+                <Input id="stock" type="number" placeholder="Nhập số lượng tồn kho" />
               </div>
 
               <div className="space-y-2">
@@ -256,6 +230,7 @@ export default function Products() {
                   <SelectContent>
                     <SelectItem value="active">Đang bán</SelectItem>
                     <SelectItem value="inactive">Ngừng bán</SelectItem>
+                    <SelectItem value="outofstock">Hết hàng</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -263,7 +238,7 @@ export default function Products() {
 
             <div className="flex justify-between gap-2">
               <Button variant="outline" asChild>
-                <Link href="products/new-product">Edit Full Form</Link>
+                <Link href="/products/new-product">Edit Full Form</Link>
               </Button>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>

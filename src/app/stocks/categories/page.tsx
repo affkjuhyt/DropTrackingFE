@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/shadcn/button";
 import { DataTable } from "@/components/ui/shadcn/data-table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/shadcn/dialog";
 import { Label } from "@/components/ui/shadcn/label";
-import { Checkbox } from "@/components/ui/shadcn/checkbox";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 interface Category {
   id: string;
@@ -19,7 +19,7 @@ interface Category {
 }
 
 export default function Categories() {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -36,23 +36,6 @@ export default function Categories() {
   };
 
   const columns = [
-    {
-      id: 'select',
-      header: ({ table }: any) => (
-        <Checkbox
-          checked={table?.getIsAllPageRowsSelected?.() || false}
-          onCheckedChange={(value) => table?.toggleAllPageRowsSelected?.(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }: any) => (
-        <Checkbox
-          checked={row?.getIsSelected?.() || false}
-          onCheckedChange={(value) => row?.toggleSelected?.(!!value)}
-          aria-label="Select row"
-        />
-      ),
-    },
     {
       accessorKey: 'name',
       header: ({ column }: any) => (
@@ -93,6 +76,7 @@ export default function Categories() {
       cell: ({ row }: { row: any }) => (
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => handleEdit(row.original)}>Sửa</Button>
+          <Button variant="outline" size="sm" onClick={() => handleViewDetails(row.original)}>Chi tiết</Button>
           <Button variant="destructive" size="sm" onClick={() => handleDelete(row.original.id)}>Xóa</Button>
         </div>
       ),
@@ -114,24 +98,24 @@ export default function Categories() {
     // Implement edit logic
   };
 
+  const handleViewDetails = (category: Category) => {
+    router.push(`/categories/${category.id}`);
+  };
+
   const handleDelete = (id: string) => {
     // Implement delete logic
-  };
-
-  const handleDeleteSelected = () => {
-    // Implement bulk delete logic
-  };
-
-  const handleImport = () => {
-    // Implement import logic
   };
 
   const handleRefresh = () => {
     // Implement refresh logic
   };
 
+  const handleImport = () => {
+    // Implement import logic
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto py-6 space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Danh sách danh mục</CardTitle>
@@ -162,16 +146,6 @@ export default function Categories() {
         </CardHeader>
 
         <CardContent>
-          {/* Selected Actions */}
-          {selectedItems.length > 0 && (
-            <div className="mb-4">
-              <Button variant="destructive" onClick={handleDeleteSelected}>
-                Xóa {selectedItems.length} mục đã chọn
-              </Button>
-            </div>
-          )}
-
-          {/* Data Table */}
           <DataTable
             columns={columns}
             data={[]}
@@ -182,14 +156,13 @@ export default function Categories() {
         </CardContent>
       </Card>
 
-      {/* Add/Edit Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Thêm danh mục mới</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Tên danh mục</Label>
                 <Input id="name" placeholder="Nhập tên danh mục" />
@@ -201,9 +174,14 @@ export default function Categories() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
-              <Button>Lưu</Button>
+            <div className="flex justify-between gap-2">
+              <Button variant="outline" onClick={() => router.push('/categories/new-category')}>
+                Chỉnh sửa form đầy đủ
+              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
+                <Button>Lưu</Button>
+              </div>
             </div>
           </div>
         </DialogContent>
