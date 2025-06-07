@@ -8,6 +8,7 @@ import { IconProvider } from '@/providers/IconProvider';
 import { usePathname } from 'next/navigation';
 import { NO_NAVBAR_ROUTES, type AuthRoutes } from '@/constants/routes';
 import { BreadcrumbNav } from '@/components/layout/BreadcrumbNav';
+import { Toaster } from "@/components/ui/shadcn/sonner"
 
 export default function RootLayout({
   children,
@@ -37,6 +38,7 @@ export default function RootLayout({
             </QueryProvider>
           </IconProvider>
         </StoreProvider>
+        <Toaster />
       </body>
     </html>
   );

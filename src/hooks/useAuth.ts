@@ -14,6 +14,7 @@ interface AuthResponse {
 export const useAuth = () => {
   const loginMutation = useMutation<AuthResponse, Error, LoginCredentials>({
     mutationFn: async (credentials) => {
+      console.log("credentials: ", credentials);
       const response = await apiClient.post('/auth/login', credentials);
       const { access_token } = response.data;
       localStorage.setItem('token', access_token);
@@ -30,6 +31,7 @@ export const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
     window.location.href = '/auth/signin';
   };
 

@@ -238,7 +238,7 @@ export default function Products() {
 
             <div className="flex justify-between gap-2">
               <Button variant="outline" asChild>
-                <Link href="/products/new-product">Edit Full Form</Link>
+                <Link href="products/new-product">Edit Full Form</Link>
               </Button>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>

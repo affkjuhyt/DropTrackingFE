@@ -14,7 +14,6 @@ export default function NewProductPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Thêm sản phẩm mới</h1>
         <div className="flex gap-2">
-          <Button variant="outline">Hủy</Button>
           <Button>Lưu</Button>
         </div>
       </div>
