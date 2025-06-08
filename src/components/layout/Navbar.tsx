@@ -264,7 +264,7 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Page Content */}
-        <main className="flex-1 p-6 bg-gray-50">
+        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto max-h-screen">
           {children}
         </main>
       </div>

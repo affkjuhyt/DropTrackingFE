@@ -24,9 +24,9 @@ interface DataTableProps<TData> {
   pageCount: number;
   currentPage: number;
   onPageChange: (page: number) => void;
-  sortBy: string;
-  sortOrder: string;
-  onSortChange: (field: string, order: "desc" | "asc") => void;
+  sortBy?: string;
+  sortOrder?: string;
+  onSortChange?: (field: string, order: "desc" | "asc") => void;
 }
 
 export function DataTable<TData>({
@@ -35,19 +35,16 @@ export function DataTable<TData>({
   pageCount,
   currentPage,
   onPageChange,
-  sortBy,
-  sortOrder,
+  sortBy = '',
+  sortOrder = 'desc',
   onSortChange,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([
-    {
-      id: sortBy,
-      desc: sortOrder === "desc"
-    }
-  ]);
+  const [sorting, setSorting] = React.useState<SortingState>(
+    sortBy ? [{ id: sortBy, desc: sortOrder === "desc" }] : []
+  );
 
   React.useEffect(() => {
-    if (sorting.length > 0) {
+    if (sorting.length > 0 && onSortChange) {
       const { id, desc } = sorting[0];
       onSortChange(id, desc ? "desc" : "asc");
     }
@@ -58,7 +55,7 @@ export function DataTable<TData>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange: onSortChange ? setSorting : undefined,
     state: {
       sorting,
     },
