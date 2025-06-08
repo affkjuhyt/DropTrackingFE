@@ -39,7 +39,7 @@ const CUSTOMER_TYPE_OPTIONS = [
 
 const FILTER_CONFIGS: FilterConfig[] = [
   {
-    key: 'customerType',
+    key: 'customer_type',
     label: 'Loại khách hàng',
     options: CUSTOMER_TYPE_OPTIONS,
   },
