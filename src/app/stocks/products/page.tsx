@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/shadcn/badge";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
 import { ProductFilters, useCreateProduct, useProducts } from '@/services/products';
 import { toast } from 'sonner';
+import { useCategories } from '@/services/categories';
 
 interface Product {
   id: string;
@@ -42,6 +43,8 @@ export default function Products() {
   });
 
   const { data: products, isLoading } = useProducts(filters);
+  const { data: categories } = useCategories();
+  console.log("categories", categories);
 
   useEffect(() => {
     if (searchTerm) {
@@ -169,21 +172,28 @@ export default function Products() {
           <div className="flex gap-4 mb-4">
             <div className="w-64">
               <Label>Danh mục</Label>
-              <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>                
+              <Select
+                value={filters.category}
+                onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
+
                 <SelectContent>
                   <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="electronics">Điện tử</SelectItem>
-                  <SelectItem value="clothing">Thời trang</SelectItem>
-                  <SelectItem value="accessories">Phụ kiện</SelectItem>
+
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name || cat.id.toString()}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="w-64">
               <Label>Trạng thái</Label>
-              <Select value={filters.status} onValueChange={(value: "all" | "available" | "discontinued" | "out_of_stock") => setFilters(prev => ({ ...prev, status: value }))}>                
+              <Select value={filters.status ?? ''} onValueChange={(value: "all" | "available" | "discontinued" | "out_of_stock") => setFilters(prev => ({ ...prev, status: value }))}>                
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
@@ -233,14 +243,19 @@ export default function Products() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="category">Danh mục</Label>
-              <Select value={formData.category_id} onValueChange={(value) => handleInputChange('category_id', value)}>
+              <Select
+                value={formData.category_id?.toString() ?? ''}
+                onValueChange={(value) => handleInputChange('category_id', Number(value))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">Điện tử</SelectItem>
-                  <SelectItem value="2">Thời trang</SelectItem>
-                  <SelectItem value="3">Phụ kiện</SelectItem>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

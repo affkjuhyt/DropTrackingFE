@@ -7,7 +7,7 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  status: 'active' | 'inactive';
+  status: 'available' | 'discontinued' | 'out_of_stock' | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,11 +16,11 @@ export interface CreateProductDTO {
   name: string;
   sku: string;
   category_id: string;
-  status: string;
+  status: string | null;
 }
 
 export interface UpdateProductDTO extends Partial<CreateProductDTO> {
-  status?: 'available' | 'discontinued' | '' | 'out_of_stock';
+  status?: 'available' | 'discontinued' | null | 'out_of_stock';
 }
 
 export interface ProductFilters {
