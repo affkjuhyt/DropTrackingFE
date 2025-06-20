@@ -16,18 +16,21 @@ export interface Product {
 
 export interface CreateProductDTO {
   name: string;
-  description: string;
+  sku: string;
   price: number;
-  stock: number;
+  quantity: number;
+  category_id: string;
+  status: string;
 }
 
 export interface UpdateProductDTO extends Partial<CreateProductDTO> {
-  status?: 'active' | 'inactive';
+  status?: 'available' | 'discontinued' | '' | 'out_of_stock';
 }
 
 export interface ProductFilters {
-  status?: 'active' | 'inactive';
+  status?: 'available' | 'discontinued' | 'out_of_stock' | '';
   search?: string;
+  category?: string;
 }
 
 const PRODUCTS_ENDPOINT = '/products';
@@ -44,6 +47,7 @@ export const getProduct = async (id: string): Promise<Product> => {
 };
 
 export const createProduct = async (product: CreateProductDTO): Promise<Product> => {
+  console.log("product", product);
   const { data } = await apiClient.post<{ data: Product }>(PRODUCTS_ENDPOINT, product);
   return data.data;
 };

@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Button } from "@/components/ui/shadcn/button"
@@ -10,11 +12,41 @@ import {
 } from "@/components/ui/shadcn/card"
 import { Input } from "@/components/ui/shadcn/input"
 import { Label } from "@/components/ui/shadcn/label"
+import { useAuth } from "@/hooks/useAuth"
+import { useState, FormEvent } from "react"
+import { useRouter } from "next/navigation"
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { register, isPending } = useAuth()
+  const router = useRouter()
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    first_name: "",
+    last_name: "",
+  })
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      await register(formData)
+      router.push("/auth/signin")
+    } catch (error) {
+      console.error("Registration failed:", error)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }))
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -25,7 +57,7 @@ export function SignupForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
@@ -55,21 +87,23 @@ export function SignupForm({
               <div className="grid gap-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-3">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="first_name">First Name</Label>
                     <Input
-                      id="firstName"
+                      id="first_name"
                       type="text"
                       placeholder="John"
-                      required
+                      value={formData.first_name}
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="last_name">Last Name</Label>
                     <Input
-                      id="lastName"
+                      id="last_name"
                       type="text"
                       placeholder="Doe"
-                      required
+                      value={formData.last_name}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
@@ -80,18 +114,22 @@ export function SignupForm({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    value={formData.email}
+                    onChange={handleInputChange}
                   />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    required 
+                    value={formData.password}
+                    onChange={handleInputChange}
+                  />
                 </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" required />
-                </div>
-                <Button type="submit" className="w-full">
-                  Create Account
+                <Button type="submit" className="w-full" disabled={isPending}>
+                  {isPending ? "Creating Account..." : "Create Account"}
                 </Button>
               </div>
               <div className="text-center text-sm">

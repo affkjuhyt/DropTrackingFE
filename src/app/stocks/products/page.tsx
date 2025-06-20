@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card";
 import { Input } from "@/components/ui/shadcn/input";
 import { Button } from "@/components/ui/shadcn/button";
@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select";
 import { Badge } from "@/components/ui/shadcn/badge";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
-import Link from 'next/link';
+import { ProductFilters, useCreateProduct, useProducts } from '@/services/products';
+import { toast } from 'sonner';
 
 interface Product {
   id: string;
@@ -27,10 +28,65 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<ProductFilters>({
+    status: '',
+    search: '',
     category: '',
-    status: ''
   });
+
+  const [formData, setFormData] = useState({
+    name: '',
+    sku: '',
+    price: 0,
+    quantity: 0,
+    category_id: '',
+    status: 'available'
+  });
+
+  const { data: products, isLoading } = useProducts(filters);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const debounceSearch = setTimeout(() => {
+        setFilters(prev => ({ ...prev, search: searchTerm }));
+      }, 500);
+
+      return () => clearTimeout(debounceSearch);
+    } else {
+      setFilters(prev => ({ ...prev, search: '' }));
+    }
+  }, [searchTerm]);
+  const createProductMutation = useCreateProduct();
+
+  const handleInputChange = (field: string, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!formData.name || !formData.sku || !formData.price || !formData.quantity || !formData.category_id) {
+        toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+        return;
+      }
+      await createProductMutation.mutateAsync(formData);
+      toast.success('Tạo sản phẩm thành công');
+      setIsAddDialogOpen(false);
+      setFormData({
+        name: '',
+        sku: '',
+        price: 0,
+        quantity: 0,
+        category_id: '',
+        status: 'available'
+      });
+    } catch (error) {
+      console.error('Failed to create product:', error);
+      toast.error('Có lỗi xảy ra khi tạo sản phẩm');
+    }
+  };
 
   const handleSort = (key: string) => {
     setSortConfig(prev => ({
@@ -142,7 +198,8 @@ export default function Products() {
           <div className="flex gap-4 mb-4">
             <div className="w-64">
               <Label>Danh mục</Label>
-              <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>                <SelectTrigger>
+              <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>                
+                <SelectTrigger>
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
                 <SelectContent>
@@ -155,14 +212,15 @@ export default function Products() {
             </div>
             <div className="w-64">
               <Label>Trạng thái</Label>
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>                <SelectTrigger>
+              <Select value={filters.status} onValueChange={(value: "all" | "available" | "discontinued" | "out_of_stock") => setFilters(prev => ({ ...prev, status: value }))}>                
+                <SelectTrigger>
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="active">Đang bán</SelectItem>
-                  <SelectItem value="inactive">Ngừng bán</SelectItem>
-                  <SelectItem value="outofstock">Hết hàng</SelectItem>
+                  <SelectItem value="available">Đang bán</SelectItem>
+                  <SelectItem value="discontinued">Ngừng bán</SelectItem>
+                  <SelectItem value="out_of_stock">Hết hàng</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -171,7 +229,7 @@ export default function Products() {
           {/* Data Table */}
           <DataTable
             columns={columns}
-            data={[]}
+            data={products || []}
             pageCount={10}
             currentPage={currentPage}
             onPageChange={setCurrentPage}
@@ -179,72 +237,79 @@ export default function Products() {
         </CardContent>
       </Card>
 
-      {/* Add/Edit Dialog */}
+      {/* Add Product Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Thêm sản phẩm mới</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Tên sản phẩm</Label>
-                <Input id="name" placeholder="Nhập tên sản phẩm" />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="sku">SKU</Label>
-                <Input id="sku" placeholder="Nhập SKU" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="price">Giá</Label>
-                <Input id="price" type="number" placeholder="Nhập giá" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="stock">Tồn kho</Label>
-                <Input id="stock" type="number" placeholder="Nhập số lượng tồn kho" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category">Danh mục</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn danh mục" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="electronics">Điện tử</SelectItem>
-                    <SelectItem value="clothing">Thời trang</SelectItem>
-                    <SelectItem value="accessories">Phụ kiện</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status">Trạng thái</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn trạng thái" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Đang bán</SelectItem>
-                    <SelectItem value="inactive">Ngừng bán</SelectItem>
-                    <SelectItem value="outofstock">Hết hàng</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Tên sản phẩm</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+              />
             </div>
-
-            <div className="flex justify-between gap-2">
-              <Button variant="outline" asChild>
-                <Link href="products/new-product">Edit Full Form</Link>
-              </Button>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
-                <Button>Lưu</Button>
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="sku">SKU</Label>
+              <Input
+                id="sku"
+                value={formData.sku}
+                onChange={(e) => handleInputChange('sku', e.target.value)}
+              />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="price">Giá</Label>
+              <Input
+                id="price"
+                type="number"
+                value={formData.price}
+                onChange={(e) => handleInputChange('price', Number(e.target.value))}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="stock">Số lượng</Label>
+              <Input
+                id="quantity"
+                type="number"
+                value={formData.quantity}
+                onChange={(e) => handleInputChange('quantity', Number(e.target.value))}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="category">Danh mục</Label>
+              <Select value={formData.category_id} onValueChange={(value) => handleInputChange('category_id', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn danh mục" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Điện tử</SelectItem>
+                  <SelectItem value="2">Thời trang</SelectItem>
+                  <SelectItem value="3">Phụ kiện</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="status">Trạng thái</Label>
+              <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn trạng thái" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Đang bán</SelectItem>
+                  <SelectItem value="inactive">Ngừng bán</SelectItem>
+                  <SelectItem value="out_of_stock">Hết hàng</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-4">
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
+            <Button onClick={handleSubmit} disabled={createProductMutation.isPending}>
+              {createProductMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

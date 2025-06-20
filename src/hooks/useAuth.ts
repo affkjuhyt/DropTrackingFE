@@ -1,9 +1,17 @@
 import apiClient from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import { getToken } from "@/lib/utils";
+
 interface LoginCredentials {
   email: string;
   password: string;
+}
+
+interface RegisterCredentials {
+  email: string;
+  password: string;
+  first_name?: string;
+  last_name?: string;
 }
 
 interface AuthResponse {
@@ -22,9 +30,9 @@ export const useAuth = () => {
     }
   });
 
-  const registerMutation = useMutation<AuthResponse, Error, LoginCredentials>({
+  const registerMutation = useMutation<AuthResponse, Error, RegisterCredentials>({
     mutationFn: async (credentials) => {
-      const response = await apiClient.post('/auth/register', credentials);
+      const response = await apiClient.post('/auth/signup', credentials);
       return response.data;
     }
   });
