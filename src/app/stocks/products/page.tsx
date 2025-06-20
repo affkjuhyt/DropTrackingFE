@@ -29,7 +29,7 @@ export default function Products() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
   const [filters, setFilters] = useState<ProductFilters>({
-    status: '',
+    status: null,
     search: '',
     category: '',
   });
@@ -37,8 +37,6 @@ export default function Products() {
   const [formData, setFormData] = useState({
     name: '',
     sku: '',
-    price: 0,
-    quantity: 0,
     category_id: '',
     status: 'available'
   });
@@ -67,7 +65,7 @@ export default function Products() {
 
   const handleSubmit = async () => {
     try {
-      if (!formData.name || !formData.sku || !formData.price || !formData.quantity || !formData.category_id) {
+      if (!formData.name || !formData.sku || !formData.category_id || !formData.status) {
         toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
         return;
       }
@@ -77,8 +75,6 @@ export default function Products() {
       setFormData({
         name: '',
         sku: '',
-        price: 0,
-        quantity: 0,
         category_id: '',
         status: 'available'
       });
@@ -86,13 +82,6 @@ export default function Products() {
       console.error('Failed to create product:', error);
       toast.error('Có lỗi xảy ra khi tạo sản phẩm');
     }
-  };
-
-  const handleSort = (key: string) => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
-    }));
   };
 
   const handleAdd = () => {
@@ -118,24 +107,6 @@ export default function Products() {
   const columns = [
     { accessorKey: 'name', header: 'Tên sản phẩm' },
     { accessorKey: 'sku', header: 'SKU' },
-    {
-      accessorKey: 'price',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('price')}>
-          Giá
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    },
-    {
-      accessorKey: 'stock',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('stock')}>
-          Tồn kho
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    },
     { accessorKey: 'category', header: 'Danh mục' },
     {
       accessorKey: 'status',
@@ -261,24 +232,6 @@ export default function Products() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="price">Giá</Label>
-              <Input
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={(e) => handleInputChange('price', Number(e.target.value))}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="stock">Số lượng</Label>
-              <Input
-                id="quantity"
-                type="number"
-                value={formData.quantity}
-                onChange={(e) => handleInputChange('quantity', Number(e.target.value))}
-              />
-            </div>
-            <div className="grid gap-2">
               <Label htmlFor="category">Danh mục</Label>
               <Select value={formData.category_id} onValueChange={(value) => handleInputChange('category_id', value)}>
                 <SelectTrigger>
@@ -298,8 +251,8 @@ export default function Products() {
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Đang bán</SelectItem>
-                  <SelectItem value="inactive">Ngừng bán</SelectItem>
+                  <SelectItem value="available">Đang bán</SelectItem>
+                  <SelectItem value="discontinued">Ngừng bán</SelectItem>
                   <SelectItem value="out_of_stock">Hết hàng</SelectItem>
                 </SelectContent>
               </Select>

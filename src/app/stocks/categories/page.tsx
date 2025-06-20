@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/shadcn/label";
 import { PlusIcon, SearchIcon, RefreshCw, ImportIcon, ArrowUpDown } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useCategories, useCreateCategory } from '@/services/categories';
+import { toast } from 'sonner';
 
 interface Category {
   id: string;
@@ -24,6 +26,8 @@ export default function Categories() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
+
+  const createCategoryMutation = useCreateCategory();
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("vi-VN", {
@@ -41,35 +45,12 @@ export default function Categories() {
       header: ({ column }: any) => (
         <Button variant="ghost" onClick={() => handleSort('name')}>
           Tên danh mục
-          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
     },
     {
       accessorKey: 'description',
       header: 'Mô tả',
-    },
-    {
-      accessorKey: 'createdAt',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('createdAt')}>
-          Ngày tạo
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }: { row: { getValue: (key: string) => any } }) => 
-        formatDate(row.getValue("createdAt")),
-    },
-    {
-      accessorKey: 'updatedAt',
-      header: ({ column }: any) => (
-        <Button variant="ghost" onClick={() => handleSort('updatedAt')}>
-          Ngày cập nhật
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }: { row: { getValue: (key: string) => any } }) => 
-        formatDate(row.getValue("updatedAt")),
     },
     {
       id: 'actions',
@@ -82,6 +63,17 @@ export default function Categories() {
       ),
     },
   ];
+
+  const [formData, setFormData] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    parent_id: null,
+    tax_class_id: null,
+  });
+
+  const { data: categories, isLoading } = useCategories();
+  console.log("categories", categories);
 
   const handleSort = (key: string) => {
     setSortConfig(prev => ({
@@ -113,6 +105,36 @@ export default function Categories() {
   const handleImport = () => {
     // Implement import logic
   };
+
+  const handleInputChange = (field: string, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmit = async () => {
+    console.log("formData", formData);
+    try {
+      if (!formData.name || !formData.description) {
+        toast.error('Vui lòng điền đày đủ thông tin bắt buộc');
+        return;
+      }
+      await createCategoryMutation.mutateAsync(formData);
+      toast.success('Tạo danh mục thành cong');
+      setIsAddDialogOpen(false);
+      setFormData({
+        name: '',
+        slug: '',
+        description: '',
+        parent_id: null,
+        tax_class_id: null,
+      });
+    } catch (error) {
+      console.error('Failed to create category:', error);
+      toast.error('Có lỗi xảy ra khi tạo danh mục');
+    }
+  }
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -148,7 +170,7 @@ export default function Categories() {
         <CardContent>
           <DataTable
             columns={columns}
-            data={[]}
+            data={categories || []}
             pageCount={10}
             currentPage={currentPage}
             onPageChange={setCurrentPage}
@@ -165,12 +187,24 @@ export default function Categories() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Tên danh mục</Label>
-                <Input id="name" placeholder="Nhập tên danh mục" />
+                <Input 
+                  id="name" 
+                  placeholder="Nhập tên danh mục" 
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="description">Mô tả</Label>
-                <Input id="description" placeholder="Nhập mô tả" />
+                <Input 
+                  id="description"
+                  placeholder="Nhập mô tả" 
+                  value={formData.description}
+                  onChange={(e) => {
+                    handleInputChange('description', e.target.value);
+                  }}
+                />
               </div>
             </div>
 
@@ -180,7 +214,9 @@ export default function Categories() {
               </Button>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Hủy</Button>
-                <Button>Lưu</Button>
+                <Button onClick={handleSubmit} disabled={createCategoryMutation.isPending}>
+                  {createCategoryMutation.isPending ? "Dang luu": "Luu"}
+                </Button>
               </div>
             </div>
           </div>

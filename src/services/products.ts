@@ -7,8 +7,6 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
-  stock: number;
   status: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;
@@ -17,8 +15,6 @@ export interface Product {
 export interface CreateProductDTO {
   name: string;
   sku: string;
-  price: number;
-  quantity: number;
   category_id: string;
   status: string;
 }
@@ -28,7 +24,7 @@ export interface UpdateProductDTO extends Partial<CreateProductDTO> {
 }
 
 export interface ProductFilters {
-  status?: 'available' | 'discontinued' | 'out_of_stock' | '';
+  status?: 'available' | 'discontinued' | 'out_of_stock' | null;
   search?: string;
   category?: string;
 }
@@ -37,8 +33,8 @@ const PRODUCTS_ENDPOINT = '/products';
 
 // API functions
 export const getProducts = async (filters?: ProductFilters): Promise<Product[]> => {
-  const { data } = await apiClient.get<{ data: Product[] }>(PRODUCTS_ENDPOINT, { params: filters });
-  return data.data;
+  const { data } = await apiClient.get<{ items: Product[] }>(PRODUCTS_ENDPOINT, { params: filters });
+  return data.items;
 };
 
 export const getProduct = async (id: string): Promise<Product> => {
@@ -47,7 +43,6 @@ export const getProduct = async (id: string): Promise<Product> => {
 };
 
 export const createProduct = async (product: CreateProductDTO): Promise<Product> => {
-  console.log("product", product);
   const { data } = await apiClient.post<{ data: Product }>(PRODUCTS_ENDPOINT, product);
   return data.data;
 };
